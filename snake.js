@@ -12,6 +12,27 @@ var score = 0;
 var speed = 100;
 var paused = false;
 
+// Set up local storage
+var highScore = 0;
+if (localStorage.getItem("highScore")) {
+  highScore = localStorage.getItem("highScore");
+}
+
+// Create start screen elements
+var startScreen = document.createElement("div");
+startScreen.innerHTML = "<h1>Snake Game</h1><button id='start-button'>Start</button><button id='high-score-button'>High Score</button>";
+var startButton = startScreen.querySelector("#start-button");
+var highScoreButton = startScreen.querySelector("#high-score-button");
+
+// Create game over screen elements
+var gameOverScreen = document.createElement("div");
+gameOverScreen.innerHTML = "<h1>Game Over!</h1><p>Your score was <span id='game-over-score'></span></p><button id='replay-button'>Replay</button>";
+var gameOverScore = gameOverScore = gameOverScreen.querySelector("#game-over-score");
+var replayButton = gameOverScreen.querySelector("#replay-button");
+
+// Add start screen to the page
+document.body.appendChild(startScreen);
+
 // Resize the canvas and add a border
 function resizeCanvas() {
   var newWidth = Math.floor(window.innerWidth * 0.9) - (borderWidth * 2);
@@ -31,14 +52,10 @@ function resizeCanvas() {
 
   // Add a border to the canvas
   canvas.style.border = borderWidth + "px solid black";
-}
 
-// Start the game
-function startGame() {
-  resizeCanvas();
-  generateFood();
-  draw();
-  update();
+  // Reposition start screen in center of canvas
+  startScreen.style.left = (canvas.width - startScreen.offsetWidth) / 2 + "px";
+  startScreen.style.top = (canvas.height - startScreen.offsetHeight) / 2 + "px";
 }
 
 // Draw the snake, food, and score on the canvas
@@ -68,118 +85,105 @@ function update() {
     case "up":
       head.y -= 1;
       break;
-    case "down":
-      head.y += 1;
-      break;
-    case "left":
-      head.x -= 1;
-      break;
-    case "right":
-      head.x += 1;
-      break;
-  }
-
-  if (head.x < 0 || head.x >= Math.floor(canvas.width / cellSize) || head.y < 0 || head.y >= Math.floor(canvas.height / cellSize)) {
-    gameOver();
-    return;
-  }
-  for (var i = 1; i < snake.length; i++) {
-    if (head.x == snake[i].x && head.y == snake[i].y) {
-      gameOver();
-      return;
+    case "
+    // Generate a new food item at a random position on the canvas
+    function generateFood() {
+      var x = Math.floor(Math.random() * Math.floor(canvas.width / cellSize));
+      var y = Math.floor(Math.random() * Math.floor(canvas.height / cellSize));
+      food = {x: x, y: y};
     }
-  }
-  if (head.x == food.x && head.y == food.y) {
-    score += 10;
-    speed -= 2;
-    if (speed < 50) speed = 50;
-    generateFood();
-    snake.unshift(head);
-  } else {
-    snake.unshift(head);
-    snake.pop();
-  }
-
-  draw();
-  setTimeout(update, speed);
-}
-
-// Generate a new food item at a random position on the canvas
-function generateFood() {
-var x = Math.floor(Math.random() * Math.floor(canvas.width / cellSize));
-var y = Math.floor(Math.random() * Math.floor(canvas.height / cellSize));
-food = {x: x, y: y};
-}
-
-// End the game and show the start screen with a replay button
-function gameOver() {
-// Hide the canvas
-canvas.style.display = "none";
-
-// Display the start screen
-var startScreen = document.createElement("div");
-startScreen.innerHTML = "<h1>Game Over!</h1><p>Your score was " + score + "</p><button id='replay-button'>Replay</button>";
-document.body.appendChild(startScreen);
-
-// Reset the game state when the replay button is clicked
-var replayButton = document.getElementById("replay-button");
-replayButton.addEventListener("click", function() {
-canvas.style.display = "block";
-startScreen.remove();
-snake = [{x: 10, y: 10}];
-score = 0;
-speed = 100;
-direction = "right";
-generateFood();
-draw();
-update();
-});
-
-// Save the high score to local storage
-var highScore = localStorage.getItem("highScore");
-if (highScore === null || score > highScore) {
-localStorage.setItem("highScore", score);
-}
-
-// Display the high score on the canvas
-displayHighScore();
-}
-
-// Display the high score on the canvas
-function displayHighScore() {
-var highScore = localStorage.getItem("highScore");
-if (highScore !== null) {
-ctx.fillStyle = "black";
-ctx.font = Math.floor(cellSize * 0.8) + "px Arial";
-ctx.fillText("High Score: " + highScore, cellSize, cellSize * 3);
-}
-}
-
-// Add event listeners
-window.addEventListener("resize", resizeCanvas);
-document.addEventListener("keydown", function(event) {
-  switch (event.key) {
-    case "ArrowUp":
-      if (direction != "down") direction = "up";
-      break;
-    case "ArrowDown":
-      if (direction != "up") direction = "down";
-      break;
-    case "ArrowLeft":
-      if (direction != "right") direction = "left";
-      break;
-    case "ArrowRight":
-      if (direction != "left") direction = "right";
-      break;
-    case " ":
-      paused = !paused;
-      if (!paused) {
-        update();
+    
+    // End the game and show the game over screen
+    function gameOver() {
+      // Stop the update loop
+      clearTimeout(updateTimer);
+    
+      // Hide the canvas and show the game over screen
+      canvas.style.display = "none";
+      gameOverScore.textContent = score;
+      document.body.appendChild(gameOverScreen);
+    
+      // Save the high score to local storage
+      if (score > highScore) {
+        localStorage.setItem("highScore", score);
       }
-      break;
-  }
-});
-
-
-// Start the game
-startGame();
+    }
+    
+    // Start a new game
+    function startNewGame() {
+      // Reset game state
+      snake = [{x: 10, y: 10}];
+      direction = "right";
+      score = 0;
+      speed = 100;
+      paused = false;
+      generateFood();
+    
+      // Reset canvas and display
+      resizeCanvas();
+      canvas.style.display = "block";
+    
+      // Remove start screen and game over screen if they are visible
+      if (startScreen.parentNode) {
+        startScreen.parentNode.removeChild(startScreen);
+      }
+      if (gameOverScreen.parentNode) {
+        gameOverScreen.parentNode.removeChild(gameOverScreen);
+      }
+    
+      // Start the game loop
+      update();
+    }
+    
+    // Display the high score on the canvas
+    function displayHighScore() {
+      ctx.fillStyle = "black";
+      ctx.font = Math.floor(cellSize * 0.8) + "px Arial";
+      ctx.fillText("High Score: " + highScore, cellSize, cellSize * 3);
+    }
+    
+    // Event listeners
+    window.addEventListener("resize", resizeCanvas);
+    
+    document.addEventListener("keydown", function(event) {
+      switch (event.key) {
+        case "ArrowUp":
+          if (direction != "down") {
+            direction = "up";
+          }
+          break;
+        case "ArrowDown":
+          if (direction != "up") {
+            direction = "down";
+          }
+          break;
+        case "ArrowLeft":
+          if (direction != "right") {
+            direction = "left";
+          }
+          break;
+        case "ArrowRight":
+          if (direction != "left") {
+            direction = "right";
+          }
+          break;
+        case " ":
+          paused = !paused;
+          if (!paused) {
+            update();
+          }
+          break;
+      }
+    });
+    
+    startButton.addEventListener("click", startNewGame);
+    
+    highScoreButton.addEventListener("click", function() {
+      alert("High Score: " + highScore);
+    });
+    
+    replayButton.addEventListener("click", startNewGame);
+    
+    // Start the game by showing the start screen
+    startScreen.style.display = "block";
+    
