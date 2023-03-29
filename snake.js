@@ -130,9 +130,12 @@ function update() {
   
   // Generate a new food item at a random position on the canvas
   function generateFood() {
-    var x = Math.floor(Math.random() * Math.floor(canvas.width / cellSize));
-    var y = Math.floor(Math.random() *Math.floor(canvas.height / cellSize));
-    food = {x: x, y: y};
+    if (snake.some(segment => segment.x === food.x && segment.y === food.y)) {
+      // If the snake has eaten the previous apple, generate a new one
+      var x = Math.floor(Math.random() * Math.floor(canvas.width / cellSize));
+      var y = Math.floor(Math.random() * Math.floor(canvas.height / cellSize));
+      food = {x: x, y: y};
+    }
   }
   
   // End the game and show the game over screen
