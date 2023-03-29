@@ -78,6 +78,12 @@ function draw() {
 
 // Update the game state
 function update() {
+   // Generate food before drawing
+   generateFood();
+
+   // Draw the snake, food, and score on the canvas
+   draw();
+   
   if (paused) {
     setTimeout(update, speed);
     return;
