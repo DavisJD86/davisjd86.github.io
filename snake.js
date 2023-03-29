@@ -83,7 +83,7 @@ function update() {
 
    // Draw the snake, food, and score on the canvas
    draw();
-   
+
   if (paused) {
     setTimeout(update, speed);
     return;
@@ -149,7 +149,6 @@ function update() {
     }
   }
   
-  // Start a new game
   function startNewGame() {
     // Reset game state
     snake = [{x: 10, y: 10}];
@@ -157,7 +156,6 @@ function update() {
     score = 0;
     speed = 100;
     paused = false;
-    generateFood();
   
     // Reset canvas and display
     resizeCanvas();
@@ -171,9 +169,17 @@ function update() {
       gameOverScreen.parentNode.removeChild(gameOverScreen);
     }
   
+    // Check for high score and save to local storage
+    if (score > highScore) {
+      highScore = score;
+      localStorage.setItem("highScore", score);
+    }
+  
     // Start the game loop
+    generateFood();
     update();
   }
+  
   
   // Display the high score on the canvas
   function displayHighScore() {
