@@ -38,7 +38,6 @@ gameOverScreen.style.position = "absolute";
 
 // Resize the canvas and add a border
 function resizeCanvas() {
-  resizeCanvas();
   var newWidth = Math.floor(window.innerWidth * 0.9) - (borderWidth * 2);
   var newHeight = Math.floor(window.innerHeight * 0.9) - (borderWidth * 2);
   canvas.style.width = newWidth + "px";
