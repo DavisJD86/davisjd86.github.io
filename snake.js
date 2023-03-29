@@ -30,11 +30,15 @@ gameOverScreen.innerHTML = "<h1>Game Over!</h1><p>Your score was <span id='game-
 var gameOverScore = gameOverScore = gameOverScreen.querySelector("#game-over-score");
 var replayButton = gameOverScreen.querySelector("#replay-button");
 
-// Add start screen to the page
+// Add start and game over screens to the page
+startScreen.style.position = "absolute";
 document.body.appendChild(startScreen);
+gameOverScreen.style.position = "absolute";
+
 
 // Resize the canvas and add a border
 function resizeCanvas() {
+  resizeCanvas();
   var newWidth = Math.floor(window.innerWidth * 0.9) - (borderWidth * 2);
   var newHeight = Math.floor(window.innerHeight * 0.9) - (borderWidth * 2);
   canvas.style.width = newWidth + "px";
