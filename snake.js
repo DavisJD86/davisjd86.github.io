@@ -11,6 +11,7 @@ var food = {x: 0, y: 0};
 var score = 0;
 var speed = 100;
 var paused = false;
+var hasEaten = true; // new variable to keep track of whether the snake has eaten the apple
 
 // Set up local storage
 var highScore = 0;
