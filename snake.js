@@ -27,7 +27,7 @@ var highScoreButton = startScreen.querySelector("#high-score-button");
 // Create game over screen elements
 var gameOverScreen = document.createElement("div");
 gameOverScreen.innerHTML = "<h1>Game Over!</h1><p>Your score was <span id='game-over-score'></span></p><button id='replay-button'>Replay</button>";
-var gameOverScore = gameOverScore = gameOverScreen.querySelector("#game-over-score");
+var gameOverScore = gameOverScreen.querySelector("#game-over-score");
 var replayButton = gameOverScreen.querySelector("#replay-button");
 
 // Add start and game over screens to the page
@@ -78,11 +78,11 @@ function draw() {
 
 // Update the game state
 function update() {
-   // Generate food before drawing
-   generateFood();
+  // Draw the snake, food, and score on the canvas
+  draw();
 
-   // Draw the snake, food, and score on the canvas
-   draw();
+  // Generate food after drawing
+  generateFood();
 
   if (paused) {
     setTimeout(update, speed);
@@ -94,7 +94,7 @@ function update() {
     case "up":
       head.y -= 1;
       break;
-    case "down": // Fixed the case string
+    case "down":
       head.y += 1;
       break;
     case "left":
@@ -102,32 +102,31 @@ function update() {
       break;
     case "right":
       head.x += 1;
-     
       break;
-    }
-  
-    // Check for collisions with the canvas border or with the snake's body
-    if (head.x < 0 || head.x >= Math.floor(canvas.width / cellSize) || head.y < 0 || head.y >= Math.floor(canvas.height / cellSize) || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-      gameOver();
-      return;
-    }
-  
-    // Check for collision with food
-    if (head.x === food.x && head.y === food.y) {
-      score += 10;
-      speed *= 0.95;
-      generateFood();
-    } else {
-      snake.pop();
-    }
-  
-    // Move the snake
-    snake.unshift(head);
-  
-    // Draw the updated game state and set the next update
-    draw();
-    setTimeout(update, speed);
   }
+
+  // Check for collisions with the canvas border or with the snake's body
+  if (head.x < 0 || head.x >= Math.floor(canvas.width / cellSize) || head.y < 0 || head.y >= Math.floor(canvas.height / cellSize) || snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+    gameOver();
+    return;
+  }
+
+  // Check for collision with food
+  if (head.x === food.x && head.y === food.y) {
+    score += 10;
+    speed *= 0.95;
+    generateFood();
+  } else {
+    snake.pop();
+  }
+
+  // Move the snake
+  snake.unshift(head);
+
+  // Draw the updated game state and set the next update
+  draw();
+  setTimeout(update, speed);
+}
   
   // Generate a new food item at a random position on the canvas
   function generateFood() {
